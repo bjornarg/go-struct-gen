@@ -6,6 +6,8 @@ import json
 from structures import (Primitive, String, Int, Float, Boolean, List, Struct)
 from naming import name_to_go, find_common_part
 
+from utils import replace_reference, remove_equal
+
 def print_json(struct):
     string = "type {} struct {{\n".format(struct.name)
     for name, field in struct.fields.items():
@@ -48,25 +50,6 @@ def get_structure(data, structures, name=None):
         return build_structure(data, structures, name)
     else:
         return type_to_cls(data)
-
-
-def replace_reference(structs, old, new):
-    for struct in structs:
-        for key, value in struct.fields.items():
-            if value is old:
-                struct.fields[key] = new
-
-def remove_equal(structures):
-    non_equal = []
-    for s1 in structures:
-        found = False
-        for s2 in non_equal:
-            if s1 == s2:
-                found = True
-                replace_reference(structures, s1, s2)
-        if not found:
-            non_equal.append(s1)
-    return non_equal
 
 def create_structures(fn, root=None):
     with open(fn, "r") as fo:
